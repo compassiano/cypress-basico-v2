@@ -279,12 +279,33 @@ describe('Central de Atendimento ao Cliente TAT', function () {
       .should('not.be.visible')
   })
 
-  //Seção 12: Exercício extra 2
+  //Seção 12: Exercício extra 3
   it('preenche a area de texto usando o comando invoke', function () {
     const longText = Cypress._.repeat('0123456789', 20) //Comando Lodash para criar um texto com 200 caracteres e armazenar na variável "longText"
 
     cy.get('#open-text-area')
       .invoke('val', longText)
       .should('have.value', longText)
+  })
+
+  //Seção 12: Exercício extra 4
+  it('faz uma requisição HTTP', function () {
+    cy.request('https://cac-tat.s3.eu-central-1.amazonaws.com/index.html')
+      .should(function (response) {
+        const { status, statusText, body } = response
+        expect(status).to.equal(200)
+        expect(statusText).to.equal('OK')
+        expect(body).to.include('CAC TAT')
+      })
+  })
+  it('encontra o gato escondido', function () {
+    cy.get('#cat')
+      .should('not.be.visible')
+      .invoke('show')
+      .should('be.visible')
+    cy.get('#title') // Mudando o conteúdo do título
+      .invoke('text', 'CAT TAT')
+    cy.get('#subtitle') // Mudando o conteúdo do subtítulo
+      .invoke('text', 'I ❤️ Cats')
   })
 })
