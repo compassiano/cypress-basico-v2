@@ -1,6 +1,8 @@
 /// <reference types="Cypress" />
 
 describe('Central de Atendimento ao Cliente TAT', function () {
+  const THREE_SECONDS_IN_MS = 3000  //Variável criada para ser amplamente usada no "cy.tick" que avança no tempo os 3 segundos
+
   beforeEach(function () {
     cy.visit('./src/index.html')
   })
@@ -11,7 +13,12 @@ describe('Central de Atendimento ao Cliente TAT', function () {
 
   //Seção 3: Exercício extra 1
   it('preenche os campos obrigatórios e envia o formulário', function () {
-    const longText = 'teste, teste, teste, teste, teste, teste, teste, teste, teste, teste, teste, teste, teste, teste, teste, teste, teste, teste, teste, teste, teste, teste, teste, teste, teste, teste,'
+    //const longText = 'teste, teste, teste, teste, teste, teste, teste, teste, teste, teste, teste, teste, teste, teste, teste, teste, teste, teste, teste, teste, teste, teste, teste, teste, teste, teste,'
+
+    const longText = Cypress._.repeat('0123456789', 20) //Comando Lodash para criar um texto com 200 caracteres e armazenar na variável "longText"
+
+    cy.clock() //congela o relógio do browser
+
     cy.get('#firstName').type('Walmir')
     cy.get('#lastName').type('Filho')
     cy.get('#email').type('teste@teste.com')
@@ -20,10 +27,16 @@ describe('Central de Atendimento ao Cliente TAT', function () {
 
     cy.get('.success').should('be.visible')
     cy.get('.success').contains('Mensagem enviada com sucesso.')
+
+    cy.tick(THREE_SECONDS_IN_MS)
+
+    cy.get('.success').should('not.be.visible')
   })
 
   //Seção 3: Exercício extra 2
   it('exibe mensagem de erro ao submeter o formulário com um email com formatação inválida', function () {
+    cy.clock() //congela o relógio do browser
+
     cy.get('#firstName').type('Walmir')
     cy.get('#lastName').type('Filho')
     cy.get('#email').type('teste@teste')
@@ -32,6 +45,10 @@ describe('Central de Atendimento ao Cliente TAT', function () {
 
     cy.get('.error').should('be.visible')
     cy.get('.error').contains('Valide os campos obrigatórios!')
+
+    cy.tick(THREE_SECONDS_IN_MS)
+
+    cy.get('.success').should('not.be.visible')
   })
 
   //Seção 3: Exercício extra 3
@@ -43,6 +60,8 @@ describe('Central de Atendimento ao Cliente TAT', function () {
 
   //Seção 3: Exercício extra 4
   it('exibe mensagem de erro quando o telefone se torna obrigatório mas não é preenchido antes do envio do formulário', function () {
+    cy.clock() //congela o relógio do browser
+
     cy.get('#firstName').type('Walmir')
     cy.get('#lastName').type('Filho')
     cy.get('#email').type('teste@teste.com')
@@ -53,6 +72,10 @@ describe('Central de Atendimento ao Cliente TAT', function () {
     cy.get('.phone-label-span').contains('(obrigatório)')
     cy.get('.error').should('be.visible')
     cy.get('.error').contains('Valide os campos obrigatórios!')
+
+    cy.tick(THREE_SECONDS_IN_MS)
+
+    cy.get('.success').should('not.be.visible')
   })
 
   //Seção 3: Exercício extra 5
@@ -85,18 +108,31 @@ describe('Central de Atendimento ao Cliente TAT', function () {
   })
   //Seção 3: Exercício extra 6
   it('exibe mensagem de erro ao submeter o formulário sem preencher os campos obrigatórios', function () {
+
+    cy.clock() //congela o relógio do browser
+
     cy.contains('button', 'Enviar').click()
 
     cy.get('.error').should('be.visible')
     cy.get('.error').contains('Valide os campos obrigatórios!')
+
+    cy.tick(THREE_SECONDS_IN_MS)
+
+    cy.get('.success').should('not.be.visible')
   })
 
   //Seção 3: Exercício extra 7
   it('envia o formulário com sucesso usando um comando customizado', function () {
+    cy.clock() //congela o relógio do browser
+
     cy.fillMandatoryFieldsAndSubmit()
 
     cy.get('.success').should('be.visible')
     cy.get('.success').contains('Mensagem enviada com sucesso.')
+
+    cy.tick(THREE_SECONDS_IN_MS)
+
+    cy.get('.success').should('not.be.visible')
   })
   //Seção 3: Exercício extra 8
   it('outras validações usando CONTAINS', function () {
@@ -159,6 +195,8 @@ describe('Central de Atendimento ao Cliente TAT', function () {
 
   //Seção 6: Exercício extra
   it('exibe mensagem de erro quando o telefone se torna obrigatório mas não é preenchido antes do envio do formulário', function () {
+    cy.clock()
+
     cy.get('#firstName').type('Walmir')
     cy.get('#lastName').type('Filho')
     cy.get('#email').type('teste@teste.com')
@@ -171,6 +209,10 @@ describe('Central de Atendimento ao Cliente TAT', function () {
     cy.get('.phone-label-span').contains('(obrigatório)')
     cy.get('.error').should('be.visible')
     cy.get('.error').contains('Valide os campos obrigatórios!')
+
+    cy.tick(THREE_SECONDS_IN_MS)
+
+    cy.get('.error').should('not.be.visible')
   })
 
   //Seção 7: Exercício
@@ -209,11 +251,13 @@ describe('Central de Atendimento ao Cliente TAT', function () {
   })
 
   //Seção 8: Exercício extra 1
-  it('acessa a página da política de privacidade removendo o target e então clicando no link', function () {
-    cy.get('#privacy a')
-      .invoke('removeAttr', 'target')
-      .click()
+  Cypress._.times(3, function () { //Comando Lodash que executa o mesmo teste 3 vezes
+    it('acessa a página da política de privacidade removendo o target e então clicando no link', function () {
+      cy.get('#privacy a')
+        .invoke('removeAttr', 'target')
+        .click()
 
-    cy.contains('CAC TAT - Política de privacidade').should('be.visible')
-  })  
+      cy.contains('CAC TAT - Política de privacidade').should('be.visible')
+    })
+  })
 })
