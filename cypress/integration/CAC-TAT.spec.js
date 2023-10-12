@@ -28,7 +28,7 @@ describe('Central de Atendimento ao Cliente TAT', function () {
     cy.get('.success').should('be.visible')
     cy.get('.success').contains('Mensagem enviada com sucesso.')
 
-    cy.tick(THREE_SECONDS_IN_MS)
+    cy.tick(THREE_SECONDS_IN_MS) //Variável criada para ser amplamente usada no "cy.tick" que avança no tempo os 3 segundos
 
     cy.get('.success').should('not.be.visible')
   })
@@ -46,7 +46,7 @@ describe('Central de Atendimento ao Cliente TAT', function () {
     cy.get('.error').should('be.visible')
     cy.get('.error').contains('Valide os campos obrigatórios!')
 
-    cy.tick(THREE_SECONDS_IN_MS)
+    cy.tick(THREE_SECONDS_IN_MS) //Variável criada para ser amplamente usada no "cy.tick" que avança no tempo os 3 segundos
 
     cy.get('.success').should('not.be.visible')
   })
@@ -73,7 +73,7 @@ describe('Central de Atendimento ao Cliente TAT', function () {
     cy.get('.error').should('be.visible')
     cy.get('.error').contains('Valide os campos obrigatórios!')
 
-    cy.tick(THREE_SECONDS_IN_MS)
+    cy.tick(THREE_SECONDS_IN_MS) //Variável criada para ser amplamente usada no "cy.tick" que avança no tempo os 3 segundos
 
     cy.get('.success').should('not.be.visible')
   })
@@ -116,7 +116,7 @@ describe('Central de Atendimento ao Cliente TAT', function () {
     cy.get('.error').should('be.visible')
     cy.get('.error').contains('Valide os campos obrigatórios!')
 
-    cy.tick(THREE_SECONDS_IN_MS)
+    cy.tick(THREE_SECONDS_IN_MS) //Variável criada para ser amplamente usada no "cy.tick" que avança no tempo os 3 segundos
 
     cy.get('.success').should('not.be.visible')
   })
@@ -130,13 +130,13 @@ describe('Central de Atendimento ao Cliente TAT', function () {
     cy.get('.success').should('be.visible')
     cy.get('.success').contains('Mensagem enviada com sucesso.')
 
-    cy.tick(THREE_SECONDS_IN_MS)
+    cy.tick(THREE_SECONDS_IN_MS) //Variável criada para ser amplamente usada no "cy.tick" que avança no tempo os 3 segundos
 
     cy.get('.success').should('not.be.visible')
   })
   //Seção 3: Exercício extra 8
   it('outras validações usando CONTAINS', function () {
-    cy.fillMandatoryFieldsAndSubmit()
+    cy.fillMandatoryFieldsAndSubmit() //Comando customizado do arquivo "commands.js", que preenche os campos obrigatórios e submete
 
     cy.get('.success').contains('Mensagem enviada com sucesso.')
     cy.contains('.success', 'Mensagem enviada com sucesso.')
@@ -259,5 +259,32 @@ describe('Central de Atendimento ao Cliente TAT', function () {
 
       cy.contains('CAC TAT - Política de privacidade').should('be.visible')
     })
+  })
+
+  //Seção 12: Exercício extra 2
+  it('exibe e esconde as mensagens de sucesso e erro usando o .invoke', function () {
+    cy.get('.success')
+      .should('not.be.visible')
+      .invoke('show')
+      .should('be.visible')
+      .and('contain', 'Mensagem enviada com sucesso.')
+      .invoke('hide')
+      .should('not.be.visible')
+    cy.get('.error')
+      .should('not.be.visible')
+      .invoke('show')
+      .should('be.visible')
+      .and('contain', 'Valide os campos obrigatórios!')
+      .invoke('hide')
+      .should('not.be.visible')
+  })
+
+  //Seção 12: Exercício extra 2
+  it('preenche a area de texto usando o comando invoke', function () {
+    const longText = Cypress._.repeat('0123456789', 20) //Comando Lodash para criar um texto com 200 caracteres e armazenar na variável "longText"
+
+    cy.get('#open-text-area')
+      .invoke('val', longText)
+      .should('have.value', longText)
   })
 })
